@@ -20,6 +20,57 @@ def index():
     return "Index for Game/Review/User API"
 
 # start building your API here
+@app.route('/games')
+def games():
+
+    # games = []
+    # for game in Game.query.order_by(Game.title).all():
+    #     # game_dict = {
+    #     #     "title": game.title,
+    #     #     "genre": game.genre,
+    #     #     "platform": game.platform,
+    #     #     "price": game.price,
+    #     # }
+    #     game_dict = game.to_dict()
+
+    #     games.append(game_dict)
+    #     print(game_dict)
+    # print(games)
+    
+    # resp = make_response(games,200, {"Content-Type": "application/json"})
+    games = [game.to_dict() for game in Game.query.all()]
+
+    resp = make_response(games, 200)
+    return resp
+
+@app.route('/games/<int:id>')
+def game_by_id(id):
+    game = Game.query.filter(Game.id == id).first()
+
+    game_dict = game.to_dict()
+
+    resp = make_response(game_dict, 200)
+    
+    return resp
+
+@app.route('/games/users/<int:id>')
+def game_users_by_id(id):
+    game = Game.query.filter(Game.id == id).first()
+    # users = []
+    # for review in game.reviews:
+    #     user = review.user
+    #     user_dict = user.to_dict(rules=("-reviews",))
+    #     users.append(user_dict)
+    # use association proxy to get users for a game
+    users = [user.to_dict(rules=("-reviews",)) for user in game.users]
+
+    response = make_response(
+        users,
+        200
+    )
+
+    return response
+
 
 
 if __name__ == '__main__':
